@@ -1,0 +1,74 @@
+#!/usr/bin/env php
+<?php
+/**
+ * Prints current programming by specified channel
+ * if no channel specified, prints all currently on
+ */
+
+require_once __DIR__.'/../vendor/autoload.php';
+
+use Scrape\TvNu\Scraper;
+use Scrape\TvNu\ProgrammingPrinter;
+use Symfony\Component\Yaml\Yaml;
+
+$configFile = getenv('HOME').'/.tvnu.yml';
+$config = [];
+
+if (file_exists($configFile)) {
+    $config = Yaml::parse(file_get_contents($configFile));
+}
+
+$channelName = null;
+$showFullProgramming = false;
+
+$scraper = new Scraper();
+
+$progs = $scraper->getTodayPrograms();
+
+
+foreach ($argv as $idx => $a) {
+    if ($a == '--help' || $a == '-h') {
+        echo "Usage ".$argv[0]." [channel <options>|when]\n";
+        echo "   channel = channel name\n";
+        echo "       --full | --all  show full program listing\n";
+        echo "   'when program name'\n";
+        echo "   'home'  opens www.tv.nu in your default browser\n";
+        echo "   --help  | -h   this message\n";
+        echo "\n";
+        echo "Reads config from ".$configFile." if exists\n";
+        return;
+    } else if ($a == '--full' || $a == '--all') {
+        $showFullProgramming = true;
+    } else if ($a == 'home') {
+        $url = 'http://www.tv.nu';
+        echo "Opening ".$url." in your default browser ...\n";
+        exec('open '.$url);
+        exit(0);
+    } else if ($a == 'when') {
+        // show when program airs or NOT FOUND if not found
+        if (!isset($argv[$idx + 1])) {
+            echo "Error: Missing parameter\n";
+            exit(1);
+        }
+        $programName = $argv[$idx + 1];
+        echo ProgrammingPrinter::whenAirs($progs, $programName);
+
+        return;
+    } else if ($a && $idx > 0) {
+        if (substr($a, 0, 2) == '--') {
+            echo "Error: Unrecognized option ".$a."\n";
+            exit(1);
+        }
+        $channelName = $a;
+    }
+}
+
+
+if ($channelName) {
+    echo ProgrammingPrinter::printChannel($progs, $channelName, $showFullProgramming);
+
+} else {
+    $channels = isset($config['favorites']) ? $config['favorites'] : [];
+
+    echo ProgrammingPrinter::printAll($progs, $channels, $showFullProgramming);
+}

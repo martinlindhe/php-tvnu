@@ -1,0 +1,8 @@
+# ~/.tvnu.conf yaml configuration
+
+favorites:
+    - SVT1
+    - SVT2
+    - Kunskapskanalen
+    - TV4
+    - TV6
