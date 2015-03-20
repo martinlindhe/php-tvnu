@@ -183,7 +183,7 @@ class Scraper
         }
 
         if (!is_dir($this->cacheDir)) {
-            mkdir($this->cacheDir);
+            mkdir($this->cacheDir, 0777, true);
         }
 
         file_put_contents($cachedFile, $data);
