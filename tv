@@ -17,6 +17,10 @@ use Scrape\TvNu\Scraper;
 use Scrape\TvNu\ProgrammingPrinter;
 use Symfony\Component\Yaml\Yaml;
 
+if (!date_default_timezone_get()) {
+    date_default_timezone_set('UTC');
+}
+
 $configFile = getenv('HOME').'/.tvnu.yml';
 $config = [];
 
