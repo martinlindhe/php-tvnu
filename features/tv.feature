@@ -20,7 +20,7 @@ Feature: tv
     When I run "tv SVT1"
     Then I should get 1 columns
     And I should get a program listing containing "SVT1"
-    And I should get at least 4 rows
+    And I should get at least 2 rows
 
   Scenario: Show all programming for a given channel
     Given I am in the terminal
