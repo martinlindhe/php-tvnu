@@ -15,5 +15,5 @@
             "Scrape\\TvNu\\": "src"
         }
     },
-    "bin": ["bin/tv"]
+    "bin": ["tv"]
 }

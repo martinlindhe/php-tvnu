@@ -5,7 +5,13 @@
  * if no channel specified, prints all currently on
  */
 
-require_once __DIR__.'/../vendor/autoload.php';
+if (is_dir(__DIR__.'/vendor')) {
+    // for development
+    require_once __DIR__ . '/vendor/autoload.php';
+} else {
+    // for global installation in ~/.composer
+    require_once __DIR__ . '/../../autoload.php';
+}
 
 use Scrape\TvNu\Scraper;
 use Scrape\TvNu\ProgrammingPrinter;
