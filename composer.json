@@ -1,9 +1,11 @@
 {
     "name": "martinlindhe/php-tvnu",
+    "description": "tv.nu command line client",
     "license": "MIT",
     "require": {
         "php": ">=5.4.0",
         "jakub-onderka/php-console-color": "~0.1",
+        "martinlindhe/php-debughelper": "~0.1",
         "nesbot/carbon": "~1.17",
         "symfony/yaml": "~2.6"
     },
@@ -15,5 +17,7 @@
             "Scrape\\TvNu\\": "src"
         }
     },
-    "bin": ["tv"]
+    "bin": [
+        "tv"
+    ]
 }

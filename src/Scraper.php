@@ -22,7 +22,17 @@ class Scraper
     {
         $data = $this->getTodayData($fetchFromCache);
 
-        return $this->parseDataToProgrammingCollection($data);
+        try {
+            return $this->parseDataToProgrammingCollection($data);
+        } catch (\Exception $ex) {
+            err($ex->getMessage());
+
+            $tmpFileName = tempnam(sys_get_temp_dir(), 'tvnu-');
+            dbg("Writing response to ".$tmpFileName);
+            file_put_contents($tmpFileName, $data);
+
+            exit(1);
+        }
     }
 
     /**
@@ -71,14 +81,17 @@ class Scraper
         $res = new ChannelProgramming;
 
         // extract channel name
-        $xx = $this->str_between_exclude($chunk, '<p class="tabla_topic_label">', '</p>');
-        $xx = trim(strip_tags($xx));
-        if (!$xx) {
-            throw new \Exception('parse error 1');
+        $channelName = $this->str_between_exclude($chunk, '<p class="tabla_topic_label">', '</p>');
+        $channelName = trim(strip_tags($channelName));
+        if (!$channelName) {
+            throw new \Exception('parse error: no channel name');
         }
-        $res->setChannelName($xx);
+        $res->setChannelName($channelName);
 
         $content = $this->str_between_exclude($chunk, '<ul class="prog_tabla">', '</ul>');
+        if (!$content) {
+            throw new \Exception('parse error: no content');
+        }
 
         $content = str_replace('</li>', "\n", $content);
 
@@ -90,10 +103,13 @@ class Scraper
 
             $pos1 = strpos($prog, '/>');
             $rest = substr($prog, $pos1 + 2);
+            if (!$rest) {
+                continue;
+            }
 
             $title = $this->str_between_exclude($rest, 'title="', '"');
             if (!$title) {
-                throw new \Exception('parse error 2');
+                throw new \Exception('parse error: no title');
             }
 
             $timeChunk = trim(strip_tags($rest));
