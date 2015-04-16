@@ -70,6 +70,9 @@ class FeatureContext implements Context, SnippetAcceptingContext
      */
     public function iShouldGetColumns($columns)
     {
+        if (!$this->output) {
+            throw new \Exception('Got no result');
+        }
         return substr_count($this->output[0], '==>') == $columns;
     }
 
@@ -88,6 +91,10 @@ class FeatureContext implements Context, SnippetAcceptingContext
      */
     public function iShouldGetASearchResult()
     {
+        if (!$this->output) {
+            throw new \Exception('Got no result');
+        }
+
         if (count($this->output) < 2 || strpos($this->output[0], 'Matching') === false) {
             throw new \Exception('Unexpected result');
         }
@@ -98,6 +105,10 @@ class FeatureContext implements Context, SnippetAcceptingContext
      */
     public function iShouldGetAProgramListingContaining($arg1)
     {
+        if (!$this->output) {
+            throw new \Exception('Got no result');
+        }
+
         if (strpos($this->output[0], $arg1) === false) {
             throw new \Exception('Unexpected result');
         }
@@ -108,6 +119,10 @@ class FeatureContext implements Context, SnippetAcceptingContext
      */
     public function iShouldGetAHelpScreen()
     {
+        if (!$this->output) {
+            throw new \Exception('Got no result');
+        }
+
         if (count($this->output) < 2 || strpos($this->output[0], 'Usage') === false) {
             throw new \Exception('Unexpected result');
         }
@@ -118,6 +133,10 @@ class FeatureContext implements Context, SnippetAcceptingContext
      */
     public function iShouldGetAErrorMessage()
     {
+        if (!$this->output) {
+            throw new \Exception('Got no result');
+        }
+
         if (strpos($this->output[0], 'Error') === false) {
             throw new \Exception('Unexpected result');
         }

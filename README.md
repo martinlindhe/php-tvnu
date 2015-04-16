@@ -1,3 +1,6 @@
+## About
+[![Build Status](https://travis-ci.org/martinlindhe/php-tvnu.png?branch=master)](https://travis-ci.org/martinlindhe/php-tvnu)
+
 ## Installation
 
 Install using [Composer](https://getcomposer.org/download/):
