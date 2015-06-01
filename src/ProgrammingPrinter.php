@@ -5,6 +5,12 @@ use JakubOnderka\PhpConsoleColor\ConsoleColor;
 
 class ProgrammingPrinter
 {
+    /**
+     * @param ProgrammingCollection $collection
+     * @param $programName
+     * @return string
+     * @throws \JakubOnderka\PhpConsoleColor\InvalidStyleException
+     */
     public static function whenAirs(ProgrammingCollection $collection, $programName)
     {
         $consoleColor = new ConsoleColor();
@@ -67,6 +73,12 @@ class ProgrammingPrinter
         return $res;
     }
 
+    /**
+     * @param ProgrammingCollection $collection
+     * @param array $includeOnly
+     * @param bool $showFullProgramming
+     * @return string
+     */
     public static function printAll(ProgrammingCollection $collection, array $includeOnly = [], $showFullProgramming = true)
     {
         $width = self::getConsoleWidth();
