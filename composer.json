@@ -2,10 +2,17 @@
     "name": "martinlindhe/php-tvnu",
     "description": "tv.nu command line client",
     "license": "MIT",
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "ssh://git@styggvar.ydns.eu:62000/home/git/php-useragent-trait.git"
+        }
+    ],
     "require": {
         "php": ">=5.4.0",
         "jakub-onderka/php-console-color": "~0.1",
         "martinlindhe/php-debughelper": "~0.1",
+        "martinlindhe/php-useragent-trait": "dev-master",
         "martinlindhe/php-traits": "~0.2",
         "nesbot/carbon": "~1.19",
         "symfony/yaml": "~2.7"
