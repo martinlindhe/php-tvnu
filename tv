@@ -13,6 +13,7 @@ if (is_dir(__DIR__.'/vendor')) {
     require_once __DIR__ . '/../../autoload.php';
 }
 
+use Carbon\Carbon;
 use Scrape\TvNu\Scraper;
 use Scrape\TvNu\ProgrammingPrinter;
 use Symfony\Component\Yaml\Yaml;
@@ -29,9 +30,11 @@ if (file_exists($configFile)) {
 $channelName = null;
 $showFullProgramming = false;
 
-$scraper = new Scraper();
+$scraper = (new Scraper)
+    ->cacheTtlSeconds(3600 * 8); // 8 hours
 
-$progs = $scraper->getTodayPrograms();
+$date = Carbon::now();
+$progs = $scraper->getProgramming($date);
 
 
 foreach ($argv as $idx => $a) {

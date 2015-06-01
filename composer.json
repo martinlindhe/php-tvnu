@@ -6,8 +6,9 @@
         "php": ">=5.4.0",
         "jakub-onderka/php-console-color": "~0.1",
         "martinlindhe/php-debughelper": "~0.1",
-        "nesbot/carbon": "~1.17",
-        "symfony/yaml": "~2.6"
+        "martinlindhe/php-traits": "~0.2",
+        "nesbot/carbon": "~1.19",
+        "symfony/yaml": "~2.7"
     },
     "require-dev": {
         "behat/behat": "~3.0"
