@@ -1,4 +1,4 @@
-<?php namespace Scrape\TvNu;
+<?php namespace MartinLindhe\Scrape\TvNu;
 
 use Carbon\Carbon;
 use MartinLindhe\Traits\DiskCacheTrait;
@@ -15,16 +15,12 @@ class Scraper
     {
         $data = $this->getDataByDay($date);
 
-        return (new Parser)->parseDataToProgrammingCollection($data);
+        return Parser::parseDataToProgrammingCollection($data);
     }
 
-    public function getDataByDay(Carbon $date)
+    private function getDataByDay(Carbon $date)
     {
-        if ($date->dayOfYear == Carbon::now()->dayOfYear) {
-            $url = 'http://www.tv.nu/';
-        } else {
-            throw new \Exception ('howowxsdf');
-        }
+        $url = 'http://www.tv.nu/arkiv/'.$date->format('Y-m-d');
 
         if ($data = $this->load($url)) {
             return $data;
@@ -50,7 +46,7 @@ class Scraper
 
         $output = curl_exec($ch);
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        echo "GET ".$url." ".$httpCode."\n";
+        nfo('GET '.$url.' '.$httpCode);
 
         curl_close($ch);
         return $output;

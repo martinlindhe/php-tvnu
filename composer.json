@@ -15,7 +15,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Scrape\\TvNu\\": "src"
+            "MartinLindhe\\Scrape\\TvNu\\": "src"
         }
     },
     "bin": [

@@ -1,4 +1,4 @@
-<?php namespace Scrape\TvNu;
+<?php namespace MartinLindhe\Scrape\TvNu;
 
 use Carbon\Carbon;
 
@@ -9,30 +9,27 @@ class Parser
      * @return ProgrammingCollection
      * @throws \Exception
      */
-    public function parseDataToProgrammingCollection($data)
+    public static function parseDataToProgrammingCollection($data)
     {
         $startPos = 0;
-
+// XXX all broken
         $res = new ProgrammingCollection;
         do {
-            $findStart = '<div class="tabla_topic"> <a class="logo-container"';
-            $findEnd = '</div> </div>';
+            $findStart = '<div class="tabla_container">';
+            $findEnd = "</div> \n</div>";
             $startPos = strpos($data, $findStart, $startPos);
             if ($startPos === false) {
                 // done
                 break;
             }
-
             $endPos = strpos($data, $findEnd, $startPos);
             if ($endPos === false) {
                 throw new \Exception("parse error: didn't find end pos");
             }
-
             $chunk = substr($data, $startPos, $endPos - $startPos);
+            $programming = self::parseChannelChunk($chunk);
 
-            $programming = $this->parseChannelChunk($chunk);
             $res->addProgramming($programming);
-
             $startPos++;
 
         } while (1);
@@ -45,56 +42,66 @@ class Parser
      * @return ChannelProgramming
      * @throws \Exception
      */
-    private function parseChannelChunk($chunk)
+    private static function parseChannelChunk($chunk)
     {
         $res = new ChannelProgramming;
 
         // extract channel name
-        $channelName = $this->str_between_exclude($chunk, '<p class="tabla_topic_label">', '</p>');
+
+        $channelName = self::str_between_exclude($chunk, '<div class="tabla_topic">', '</div>');
         $channelName = trim(strip_tags($channelName));
         if (!$channelName) {
             throw new \Exception('parse error: no channel name');
         }
         $res->setChannelName($channelName);
 
-        $content = $this->str_between_exclude($chunk, '<ul class="prog_tabla">', '</ul>');
+        $content = self::str_between_exclude($chunk, '<ul class="prog_tabla">', '</ul>');
         if (!$content) {
             throw new \Exception('parse error: no content');
         }
 
         $content = str_replace('</li>', "\n", $content);
+        $content = str_replace("\t", '', $content);
+        $content = strip_tags($content);
 
         $programs = explode("\n", trim($content));
 
         $foundHour = 0;
         $addDays = 0;
-        foreach ($programs as $prog) {
 
-            $pos1 = strpos($prog, '/>');
-            $rest = substr($prog, $pos1 + 2);
-            if (!$rest) {
+        /** @var ChannelEvent $event */
+        $event = null;
+
+        foreach ($programs as $prog) {
+            if (!$prog) {
                 continue;
             }
 
-            $title = $this->str_between_exclude($rest, 'title="', '"');
-            if (!$title) {
-                throw new \Exception('parse error: no title');
+            preg_match('/^(?<hh>[\d]+)+\:(?<mm>[\d]+)+$/ui', $prog, $match);
+            if (!empty($match['hh']) && !empty($match['mm'])) {
+
+                $event = new ChannelEvent;
+
+                $time = explode(' ', $prog)[0];
+
+                $timeParts = explode(':', $time);
+                if ($timeParts[0] < $foundHour) {
+                    // new day
+                    $addDays = 1;
+                }
+                $foundHour = $timeParts[0];
+
+                $event->starts_at = Carbon::createFromTime($timeParts[0], $timeParts[1], 0, 'Europe/Stockholm')
+                    ->addDays($addDays);
+
+                continue;
             }
 
-            $timeChunk = trim(strip_tags($rest));
-            $time = explode(' ', $timeChunk)[0];
-
-            $timeParts = explode(':', $time);
-            if ($timeParts[0] < $foundHour) {
-                // new day
-                $addDays = 1;
+            if (!$event) {
+                continue;
             }
-            $c = Carbon::createFromTime($timeParts[0], $timeParts[1], 0, 'Europe/Stockholm')->addDays($addDays);
-            $foundHour = $timeParts[0];
 
-            $event = new ChannelEvent;
-            $event->starts_at = $c;
-            $event->title = $title;
+            $event->title = $prog;
 
             $res->addEvent($event);
         }
@@ -120,7 +127,7 @@ class Parser
      * @param $needle2 string
      * @return string
      */
-    private function str_between_exclude($s, $needle1, $needle2)
+    private static function str_between_exclude($s, $needle1, $needle2)
     {
         $p1 = strpos($s, $needle1);
         if ($p1 === false)
@@ -131,5 +138,26 @@ class Parser
             return '';
 
         return substr($s, $p1 + strlen($needle1), $p2 - $p1 - strlen($needle1));
+    }
+
+    /**
+     * @param $s string
+     * @param $needle1 string
+     * @param $needle2 string
+     * @return string
+     */
+    private static function mb_str_between_exclude($s, $needle1, $needle2)
+    {
+        $p1 = mb_strpos($s, $needle1);
+        if ($p1 === false) {
+            return '';
+        }
+
+        $p2 = mb_strpos($s, $needle2, $p1 + mb_strlen($needle1));
+        if ($p2 === false) {
+            return '';
+        }
+
+        return mb_substr($s, $p1 + mb_strlen($needle1), $p2 - $p1 - mb_strlen($needle1));
     }
 }

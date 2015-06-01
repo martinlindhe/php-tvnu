@@ -14,8 +14,8 @@ if (is_dir(__DIR__.'/vendor')) {
 }
 
 use Carbon\Carbon;
-use Scrape\TvNu\Scraper;
-use Scrape\TvNu\ProgrammingPrinter;
+use MartinLindhe\Scrape\TvNu\Scraper;
+use MartinLindhe\Scrape\TvNu\ProgrammingPrinter;
 use Symfony\Component\Yaml\Yaml;
 
 date_default_timezone_set('UTC');

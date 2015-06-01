@@ -1,4 +1,4 @@
-<?php namespace Scrape\TvNu;
+<?php namespace MartinLindhe\Scrape\TvNu;
 
 use Carbon\Carbon;
 use JakubOnderka\PhpConsoleColor\ConsoleColor;
