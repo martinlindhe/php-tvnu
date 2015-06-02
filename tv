@@ -34,7 +34,7 @@ $scraper = (new Scraper)
     ->cacheTtlSeconds(3600 * 8); // 8 hours
 
 $date = Carbon::now();
-$progs = $scraper->getProgramming($date);
+$collection = $scraper->getProgramming($date);
 
 
 foreach ($argv as $idx => $a) {
@@ -62,7 +62,7 @@ foreach ($argv as $idx => $a) {
             exit(1);
         }
         $programName = $argv[$idx + 1];
-        echo ProgrammingPrinter::whenAirs($progs, $programName);
+        echo ProgrammingPrinter::whenAirs($collection, $programName);
 
         return;
     } else if ($a && $idx > 0) {
@@ -76,10 +76,10 @@ foreach ($argv as $idx => $a) {
 
 
 if ($channelName) {
-    echo ProgrammingPrinter::printChannel($progs, $channelName, $showFullProgramming);
+    echo ProgrammingPrinter::printChannel($collection, $channelName, $showFullProgramming);
 
 } else {
     $channels = isset($config['favorites']) ? $config['favorites'] : [];
 
-    echo ProgrammingPrinter::printAll($progs, $channels, $showFullProgramming);
+    echo ProgrammingPrinter::printAll($collection, $channels, $showFullProgramming);
 }

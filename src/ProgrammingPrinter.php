@@ -83,16 +83,16 @@ class ProgrammingPrinter
     {
         $width = self::getConsoleWidth();
         $res = '';
-        $progs = $collection->getProgrammings();
+        $programmings = $collection->getProgrammings();
 
         $twoColumnWidth = 84;
 
         if ($width < $twoColumnWidth) {
             // terminal is too small for two columns
 
-            foreach ($progs as $prog) {
-                if (empty($includeOnly) || in_array($prog->getChannelName(), $includeOnly)) {
-                    $res .= self::printChannel($collection, $prog->getChannelName(), $showFullProgramming);
+            foreach ($programmings as $p) {
+                if (empty($includeOnly) || in_array($p->getChannelName(), $includeOnly)) {
+                    $res .= self::printChannel($collection, $p->getChannelName(), $showFullProgramming);
                     $res .= "\n";
                 }
             }
@@ -107,9 +107,9 @@ class ProgrammingPrinter
          * @var ChannelProgramming[] $included
          */
         $included = [];
-        foreach ($progs as $prog) {
-            if (empty($includeOnly) || in_array($prog->getChannelName(), $includeOnly)) {
-                $included[] = $prog;
+        foreach ($programmings as $p) {
+            if (empty($includeOnly) || in_array($p->getChannelName(), $includeOnly)) {
+                $included[] = $p;
             }
         }
 

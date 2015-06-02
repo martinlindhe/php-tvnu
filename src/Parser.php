@@ -15,7 +15,7 @@ class Parser
 // XXX all broken
         $res = new ProgrammingCollection;
         do {
-            $findStart = '<div class="tabla_container">';
+            $findStart = '<div class="tabla_topic">';
             $findEnd = "</div> \n</div>";
             $startPos = strpos($data, $findStart, $startPos);
             if ($startPos === false) {
@@ -27,7 +27,9 @@ class Parser
                 throw new \Exception("parse error: didn't find end pos");
             }
             $chunk = substr($data, $startPos, $endPos - $startPos);
+            
             $programming = self::parseChannelChunk($chunk);
+
 
             $res->addProgramming($programming);
             $startPos++;
@@ -53,6 +55,7 @@ class Parser
         if (!$channelName) {
             throw new \Exception('parse error: no channel name');
         }
+
         $res->setChannelName($channelName);
 
         $content = self::str_between_exclude($chunk, '<ul class="prog_tabla">', '</ul>');
@@ -110,7 +113,7 @@ class Parser
         $events = $res->getEvents();
         for ($i = 0; $i < count($events); $i++) {
             if (!empty($events[$i + 1])) {
-                $events[$i]->ends_at = $events[$i+1]->starts_at;
+                $events[$i]->ends_at = $events[$i+1]->starts_at->copy();
             } else {
                 // HACK: we dont know end of last event, so we add 2 hours
                 $events[$i]->ends_at = $events[$i]->starts_at->copy()->addHours(2);
