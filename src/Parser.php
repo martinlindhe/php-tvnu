@@ -12,7 +12,7 @@ class Parser
     public static function parseDataToProgrammingCollection($data)
     {
         $startPos = 0;
-// XXX all broken
+
         $res = new ProgrammingCollection;
         do {
             $findStart = '<div class="tabla_topic">';
@@ -27,9 +27,8 @@ class Parser
                 throw new \Exception("parse error: didn't find end pos");
             }
             $chunk = substr($data, $startPos, $endPos - $startPos);
-            
-            $programming = self::parseChannelChunk($chunk);
 
+            $programming = self::parseChannelChunk($chunk);
 
             $res->addProgramming($programming);
             $startPos++;
@@ -47,8 +46,6 @@ class Parser
     private static function parseChannelChunk($chunk)
     {
         $res = new ChannelProgramming;
-
-        // extract channel name
 
         $channelName = self::str_between_exclude($chunk, '<div class="tabla_topic">', '</div>');
         $channelName = trim(strip_tags($channelName));
@@ -141,26 +138,5 @@ class Parser
             return '';
 
         return substr($s, $p1 + strlen($needle1), $p2 - $p1 - strlen($needle1));
-    }
-
-    /**
-     * @param $s string
-     * @param $needle1 string
-     * @param $needle2 string
-     * @return string
-     */
-    private static function mb_str_between_exclude($s, $needle1, $needle2)
-    {
-        $p1 = mb_strpos($s, $needle1);
-        if ($p1 === false) {
-            return '';
-        }
-
-        $p2 = mb_strpos($s, $needle2, $p1 + mb_strlen($needle1));
-        if ($p2 === false) {
-            return '';
-        }
-
-        return mb_substr($s, $p1 + mb_strlen($needle1), $p2 - $p1 - mb_strlen($needle1));
     }
 }
