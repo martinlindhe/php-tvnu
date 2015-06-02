@@ -5,11 +5,12 @@ use Carbon\Carbon;
 class Parser
 {
     /**
-     * @param $data
+     * @param Carbon $date
+     * @param string $data
      * @return ProgrammingCollection
      * @throws \Exception
      */
-    public static function parseDataToProgrammingCollection($data)
+    public static function parseDataToProgrammingCollection(Carbon $date, $data)
     {
         $startPos = 0;
 
@@ -28,7 +29,7 @@ class Parser
             }
             $chunk = substr($data, $startPos, $endPos - $startPos);
 
-            $programming = self::parseChannelChunk($chunk);
+            $programming = self::parseChannelChunk($date, $chunk);
 
             $res->addProgramming($programming);
             $startPos++;
@@ -39,11 +40,12 @@ class Parser
     }
 
     /**
+     * @param Carbon $date
      * @param string $chunk
      * @return ChannelProgramming
      * @throws \Exception
      */
-    private static function parseChannelChunk($chunk)
+    private static function parseChannelChunk(Carbon $date, $chunk)
     {
         $res = new ChannelProgramming;
 
@@ -91,9 +93,10 @@ class Parser
                 }
                 $foundHour = $timeParts[0];
 
-                $event->starts_at = Carbon::createFromTime($timeParts[0], $timeParts[1], 0, 'Europe/Stockholm')
-                    ->addDays($addDays);
-
+                $event->starts_at = $date->copy();
+                $event->starts_at->addDays($addDays);
+                $event->starts_at->hour = $timeParts[0];
+                $event->starts_at->minute = $timeParts[1];
                 continue;
             }
 

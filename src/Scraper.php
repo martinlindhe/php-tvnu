@@ -17,7 +17,7 @@ class Scraper
     {
         $data = $this->getDataByDay($date);
 
-        return Parser::parseDataToProgrammingCollection($data);
+        return Parser::parseDataToProgrammingCollection($date, $data);
     }
 
     private function getDataByDay(Carbon $date)
