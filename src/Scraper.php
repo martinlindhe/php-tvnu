@@ -49,7 +49,7 @@ class Scraper
 
         $output = curl_exec($ch);
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        nfo('GET '.$url.' '.$httpCode);
+        dbg('GET '.$url.' '.$httpCode);
 
         curl_close($ch);
         return $output;
